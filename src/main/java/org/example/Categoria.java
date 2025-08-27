@@ -26,6 +26,4 @@ public class Categoria {
     @Builder.Default
     private Set<Articulo> articulos = new HashSet<>();
 
-
-
 }

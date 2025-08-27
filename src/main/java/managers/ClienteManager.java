@@ -88,4 +88,28 @@ public class ClienteManager {
 
         return "";
     }
+
+    // Ejercicio 1
+    public List<Cliente> listarTodosLosClientes() {
+        // JPQL para seleccionar todos los objetos de la entidad Cliente
+        String jpql = "SELECT c FROM Cliente c";
+        Query query = em.createQuery(jpql);
+        return query.getResultList();
+    }
+
+    // Ejercicio 3
+    public Cliente getClienteConMasFacturas() {
+        String jpql = "SELECT f.cliente FROM Factura f GROUP BY f.cliente ORDER BY COUNT(f) DESC";
+        Query query = em.createQuery(jpql).setMaxResults(1);
+        return (Cliente) query.getSingleResult();
+    }
+
+    // Ejercicio 14
+    public List<Cliente> getClientesConFacturaConTotalMayorA(double totalMinimo) {
+        String jpql = "SELECT c FROM Cliente c WHERE EXISTS (SELECT f FROM Factura f WHERE f.cliente = c AND f.total > :totalMinimo)";
+        Query query = em.createQuery(jpql);
+        query.setParameter("totalMinimo", totalMinimo);
+        return query.getResultList();
+    }
+
 }

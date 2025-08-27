@@ -27,6 +27,12 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 
+    // MySQL JDBC Driver
+    implementation 'mysql:mysql-connector-java:8.0.30'
+
+    // H2 database (for development - optional if you're now only using MySQL)
+    runtimeOnly 'com.h2database:h2:1.4.200'
+
 }
 
 test {

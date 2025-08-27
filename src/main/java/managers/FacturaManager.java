@@ -1,11 +1,13 @@
 package managers;
 
+import org.example.Articulo;
 import org.example.Factura;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -115,4 +117,66 @@ public class FacturaManager {
         em.close();
         emf.close();
     }
+
+    // Ejercicio 2
+    public List<Factura> getFacturasUltimoMes(LocalDate fechaInicio) {
+        String jpql = "SELECT f FROM Factura f WHERE f.fechaComprobante >= :fechaInicio";
+        Query query = em.createQuery(jpql);
+        query.setParameter("fechaInicio", fechaInicio);
+        return query.getResultList();
+    }
+
+    // Ejercicio 5
+    public List<Factura> getFacturasUltimosTresMesesXCliente(Long idCliente, LocalDate fechaInicio) {
+        String jpql = "SELECT f FROM Factura f WHERE f.cliente.id = :idCliente AND f.fechaComprobante >= :fechaInicio";
+        Query query = em.createQuery(jpql);
+        query.setParameter("idCliente", idCliente);
+        query.setParameter("fechaInicio", fechaInicio);
+        return query.getResultList();
+    }
+
+    // Ejercicio 6
+    public BigDecimal getMontoTotalFacturadoXCliente(Long idCliente) {
+        String jpql = "SELECT SUM(f.total) FROM Factura f WHERE f.cliente.id = :idCliente";
+        Query query = em.createQuery(jpql);
+        query.setParameter("idCliente", idCliente);
+
+        Double montoTotal = (Double) query.getSingleResult();
+
+        // Convertir el resultado de Double a BigDecimal de forma segura
+        return montoTotal != null ? BigDecimal.valueOf(montoTotal) : BigDecimal.ZERO;
+    }
+    // Ejercicio 8
+    public Articulo getArticuloMasCaroVendidoEnFactura(Long idFactura) {
+        String jpql = "SELECT fd.articulo FROM FacturaDetalle fd WHERE fd.factura.id = :idFactura ORDER BY fd.articulo.precioVenta DESC";
+        Query query = em.createQuery(jpql).setMaxResults(1);
+        return (Articulo) query.getSingleResult();
+    }
+
+    // Ejercicio 9
+    public Long getCantidadTotalFacturas() {
+        String jpql = "SELECT COUNT(f) FROM Factura f";
+        Query query = em.createQuery(jpql);
+        return (Long) query.getSingleResult();
+    }
+
+    // Ejercicio 10
+    public List<Factura> getFacturasConTotalMayorA(double total) {
+        String jpql = "SELECT f FROM Factura f WHERE f.total > :total";
+        Query query = em.createQuery(jpql);
+
+        // Corregido: Se pasa un valor de tipo Double
+        query.setParameter("total", total);
+
+        return query.getResultList();
+    }
+
+    // Ejercicio 11
+    public List<Factura> getFacturasXNombreArticulo(String nombreArticulo) {
+        String jpql = "SELECT DISTINCT f FROM Factura f JOIN f.detallesFactura fd WHERE fd.articulo.denominacion = :nombreArticulo";
+        Query query = em.createQuery(jpql);
+        query.setParameter("nombreArticulo", nombreArticulo);
+        return query.getResultList();
+    }
+
 }
